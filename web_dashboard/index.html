@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>足尺量測</title>
+  <link rel="stylesheet" href="style.css?v=3">
+</head>
+<body>
+  <aside>
+    <div class="menu-icon" aria-label="選單"><i></i><i></i><i></i></div>
+    <nav><b>量測</b><span>紀錄</span><span>模型狀態</span></nav>
+    <small>AMEBA ／ 本機 AI<br>所有資料只留在這台電腦</small>
+  </aside>
+  <main>
+    <header>
+      <div><h1>尺碼量測</h1></div>
+      <div class="health" id="health">● 等待中</div>
+    </header>
+    <section class="toolbar">
+      <label>RTSP 相機網址<input id="url" placeholder="rtsp://192.168.x.x:554"></label>
+      <button class="primary" id="start">開始即時預覽</button>
+      <button id="freeze">凍結分析畫面</button>
+      <button id="auto-measure">自動計算腳長</button>
+    </section>
+    <section class="layout">
+      <div class="stage card">
+        <div class="stage-head">
+          <div><b>即時分析</b><small id="status">請先輸入 RTSP 相機網址</small></div>
+          <div class="chips"><span id="coin">硬幣 —</span><span id="foot">襪子腳 —</span></div>
+        </div>
+        <div class="frame-wrap"><img id="frame" alt="即時 AI 相機預覽"><div id="empty">相機預覽會顯示於此</div><svg id="points"></svg></div>
+        <ol class="guide">
+          <li><b>01</b><span>將一隻穿襪的腳與一枚硬幣放在同一平面</span></li>
+          <li><b>02</b><span>兩者皆辨識到後凍結畫面</span></li>
+          <li><b>03</b><span>凍結後按自動計算腳長，系統會自動找出腳趾與腳踝</span></li>
+        </ol>
+      </div>
+      <aside class="panel card">
+        <p class="eyebrow">本次受測者</p>
+        <label>姓名<input id="name" placeholder="例如：林小美"></label>
+        <label>學號／編號<input id="sid" placeholder="選填"></label>
+        <label>備註<input id="note" placeholder="襪子、姿勢、觀察事項"></label>
+        <div class="metric"><small>預估腳長</small><strong id="length">—</strong></div>
+        <button class="primary wide" id="save">儲存量測紀錄</button>
+        <div class="record-title"><b>量測紀錄</b><button id="update" class="text">更新選取資料</button></div>
+        <div id="records" class="records"></div>
+      </aside>
+    </section>
+  </main>
+  <script src="app.js?v=6"></script>
+</body>
+</html>

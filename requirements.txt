@@ -1,0 +1,6 @@
+numpy>=1.24,<3
+opencv-python>=4.8,<5
+Pillow>=10,<13
+pyserial>=3.5,<4
+ultralytics>=8.3,<9
+pi-heif>=1.1

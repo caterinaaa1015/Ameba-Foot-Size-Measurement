@@ -1,0 +1,28 @@
+# Python and local environments
+__pycache__/
+*.py[cod]
+.venv/
+.venv-*/
+.build/
+
+# Local credentials and device settings
+firmware/ameba_foot_wifi/wifi_secrets.h
+
+# Runtime captures and personal measurement data
+foot_measure_dashboard/
+foot_captures/
+captures/
+*.log
+
+# Training datasets and generated runs
+coin_dataset/
+foot_dataset/
+output/
+runs/
+*.cache
+
+# Editor and OS files
+.vscode/
+.idea/
+Thumbs.db
+~$*
