@@ -129,8 +129,13 @@ function renderModels(data) {
 }
 
 async function refreshModels() {
-  try { renderModels(await api('/api/models')); }
-  catch (error) { $('#model-cards').textContent = error.message; }
+  try {
+    renderModels(await api('/api/models'));
+    $('#model-live-message').textContent = '即時狀態已更新';
+  } catch (_error) {
+    $('#model-cards').innerHTML = '<article class="card model-card unavailable"><div class="model-status">● 即時狀態待更新</div><h3>本機服務尚未重新啟動</h3><p>訓練小記仍可正常瀏覽。重新啟動 web_dashboard.py 後，這裡會顯示模型檔與即時載入狀態</p></article>';
+    $('#model-live-message').textContent = '請重新啟動服務以讀取即時狀態';
+  }
 }
 
 $('#start').onclick = async () => {

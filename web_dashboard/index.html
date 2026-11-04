@@ -71,7 +71,13 @@
 
     <section class="view" id="models-view" hidden>
       <header class="page-heading"><div><p class="eyebrow">本機 AI</p><h2>模型狀態</h2><p>確認量測系統使用的模型與目前載入狀態</p></div><button class="primary" data-view="measure">回到量測</button></header>
-      <section id="model-cards" class="model-grid"></section>
+      <section class="model-section"><div class="section-heading"><b>目前部署模型</b><span id="model-live-message">正在讀取即時狀態</span></div><section id="model-cards" class="model-grid"></section></section>
+      <section class="training-section"><div class="section-heading"><b>模型訓練小記</b><span>供專題與報告查閱</span></div>
+        <div class="training-grid">
+          <article class="card training-card"><p class="eyebrow">硬幣辨識</p><h3>YOLOv8n 目標偵測</h3><dl><div><dt>辨識類別</dt><dd>10 元、50 元硬幣</dd></div><div><dt>訓練資料</dt><dd>自行拍攝的臺幣硬幣影像</dd></div><div><dt>資料處理</dt><dd>由原始硬幣資料集中保留 10 元與 50 元標註</dd></div><div><dt>訓練設定</dt><dd>640 × 640、40 epochs</dd></div><div><dt>用途</dt><dd>以已知硬幣直徑建立毫米比例</dd></div></dl></article>
+          <article class="card training-card"><p class="eyebrow">襪子腳分割</p><h3>YOLOv8n-seg 影像分割</h3><dl><div><dt>辨識類別</dt><dd>穿襪足部</dd></div><div><dt>訓練資料</dt><dd>自行蒐集的不同襪子與腳型影像</dd></div><div><dt>資料處理</dt><dd>以自動遮罩輔助產生輪廓後進行檢查</dd></div><div><dt>資料增強</dt><dd>旋轉、翻轉、縮放與透視變換</dd></div><div><dt>用途</dt><dd>取得腳部遮罩並估計腳跟至最長腳趾</dd></div></dl></article>
+        </div>
+      </section>
       <section class="card model-note"><b>量測方式</b><p>系統先辨識 10 元或 50 元硬幣，再以硬幣實際直徑換算比例，結合襪子腳分割遮罩估計腳長</p></section>
     </section>
   </main>
