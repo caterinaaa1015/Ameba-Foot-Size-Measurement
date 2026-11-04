@@ -52,3 +52,12 @@ class MeasurementLedger:
                 self._write()
                 return record
         raise ValueError("找不到要編輯的量測紀錄。")
+
+    def delete(self, record_id):
+        """Remove one list entry while retaining its captured evidence files."""
+        for index, record in enumerate(self.records):
+            if record["id"] == record_id:
+                deleted = self.records.pop(index)
+                self._write()
+                return deleted
+        raise ValueError("找不到要刪除的量測紀錄。")

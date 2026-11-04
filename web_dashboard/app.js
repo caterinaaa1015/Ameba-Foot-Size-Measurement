@@ -22,16 +22,54 @@ function render(nextState) {
   (state.records || []).forEach(record => {
     const entry = document.createElement('div');
     entry.className = `record ${record.id === selected ? 'active' : ''}`;
-    entry.innerHTML = `<div><b>${record.subject_name || '未命名'}</b><small>${record.subject_id || '未填編號'} · ${record.created_utc.slice(0, 16).replace('T', ' ')}</small></div><em>${record.foot_length_mm} mm</em>`;
-    entry.onclick = () => {
-      selected = record.id;
-      $('#name').value = record.subject_name;
-      $('#sid').value = record.subject_id || '';
-      $('#note').value = record.note || '';
-      render(state);
-    };
+    const details = document.createElement('div');
+    const name = document.createElement('b');
+    name.textContent = record.subject_name || '未命名';
+    const meta = document.createElement('small');
+    meta.textContent = `${record.subject_id || '未填編號'} · ${record.created_utc.slice(0, 16).replace('T', ' ')}`;
+    details.append(name, meta);
+    const actions = document.createElement('div');
+    actions.className = 'record-actions';
+    const value = document.createElement('em');
+    value.textContent = `${record.foot_length_mm} mm`;
+    const edit = document.createElement('button');
+    edit.className = 'record-action'; edit.textContent = '編輯';
+    edit.onclick = event => { event.stopPropagation(); selectRecord(record); };
+    const remove = document.createElement('button');
+    remove.className = 'record-action danger'; remove.textContent = '刪除';
+    remove.onclick = event => { event.stopPropagation(); deleteRecord(record); };
+    actions.append(value, edit, remove);
+    entry.append(details, actions);
+    entry.onclick = () => selectRecord(record);
     box.append(entry);
   });
+}
+
+function selectRecord(record) {
+  selected = record.id;
+  $('#name').value = record.subject_name || '';
+  $('#sid').value = record.subject_id || '';
+  $('#note').value = record.note || '';
+  $('#edit-hint').textContent = `正在編輯：${record.subject_name || '未命名'}`;
+  $('#update').disabled = false;
+  $('#cancel-edit').hidden = false;
+  render(state);
+}
+
+function cancelEdit() {
+  selected = null;
+  $('#edit-hint').textContent = '選擇一筆紀錄即可編輯';
+  $('#update').disabled = true;
+  $('#cancel-edit').hidden = true;
+}
+
+async function deleteRecord(record) {
+  if (!confirm(`確定要刪除「${record.subject_name || '未命名'}」的量測紀錄嗎？`)) return;
+  try {
+    await api(`/api/records/${record.id}`, 'DELETE');
+    if (selected === record.id) cancelEdit();
+    await refresh();
+  } catch (error) { alert(error.message); }
 }
 
 async function loadFrame(force = false) {
@@ -116,8 +154,9 @@ $('#save').onclick = async () => {
 };
 $('#update').onclick = async () => {
   if (!selected) return alert('請先從右側量測紀錄選擇一筆資料');
-  try { await api(`/api/records/${selected}`, 'POST', {subject_name: $('#name').value, subject_id: $('#sid').value, note: $('#note').value}); refresh(); }
+  try { await api(`/api/records/${selected}`, 'POST', {subject_name: $('#name').value, subject_id: $('#sid').value, note: $('#note').value}); cancelEdit(); refresh(); }
   catch (error) { alert(error.message); }
 };
+$('#cancel-edit').onclick = cancelEdit;
 setInterval(refresh, 900);
 refresh();

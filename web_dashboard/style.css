@@ -40,11 +40,11 @@ button:hover { transform: translateY(-1px); } button.primary { color: #fff; back
 .metric small { color: var(--muted); font: 10px Consolas, monospace; letter-spacing: .1em; }
 .metric strong { display: block; margin-top: 3px; font: 700 38px Georgia, serif; letter-spacing: -.04em; }
 .wide { width: 100%; color: var(--ink) !important; background: var(--lime) !important; border-color: var(--lime) !important; }
-.record-title { display: flex; justify-content: space-between; align-items: center; margin: 28px 0 8px; }.record-title b { font-size: 14px; }
-.text { padding: 3px; color: #527a5d; background: transparent; border: 0; font-size: 11px; }
+.record-title { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 28px 0 4px; }.record-title b { font-size: 14px; }.record-title span { color: var(--muted); font-size: 10px; text-align: right; }
+.record-editor { display: flex; justify-content: flex-end; gap: 8px; margin: 0 0 8px; }.text { padding: 3px; color: #527a5d; background: transparent; border: 0; font-size: 11px; }.text:disabled { color: #a7afa8; cursor: default; transform: none; }
 .records { max-height: 240px; overflow: auto; border-top: 1px solid var(--line); }
 .record { display: flex; justify-content: space-between; gap: 8px; padding: 12px 2px; cursor: pointer; border-bottom: 1px solid var(--line); }
-.record:hover, .record.active { background: #f0f6dd; }.record b { display: block; font-size: 12px; }.record small { color: var(--muted); font: 10px Consolas, monospace; }.record em { font: 600 12px Consolas, monospace; font-style: normal; }
+.record:hover, .record.active { background: #f0f6dd; }.record b { display: block; font-size: 12px; }.record small { color: var(--muted); font: 10px Consolas, monospace; }.record em { font: 600 12px Consolas, monospace; font-style: normal; }.record-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 5px; }.record-actions em { width: 100%; text-align: right; }.record-action { padding: 2px 5px; border: 0; background: transparent; color: #527a5d; border-radius: 4px; font-size: 10px; }.record-action:hover { background: #e7eedb; transform: none; }.record-action.danger { color: #b7604b; }.record-action.danger:hover { background: #f9e7e1; }
 @media (max-width: 1120px) { body > aside { display: none; } main { padding: 22px; } .layout { grid-template-columns: minmax(0, 1fr) minmax(340px, 380px); } }
 @media (max-width: 920px) { main { padding: 18px; } .layout { grid-template-columns: 1fr; max-width: none; } .panel { min-height: 0; } }
 @media (max-width: 620px) { header { gap: 14px; }.health { font-size: 10px; }.toolbar { flex-wrap: wrap; }.toolbar label { min-width: 100%; }.toolbar button { flex: 1; }.stage { padding: 14px; }.panel { padding: 20px; }.stage-head { flex-direction: column; }.chips { justify-content: start; }.frame-wrap { aspect-ratio: 4 / 3; }.guide { font-size: 11px; } }

@@ -232,6 +232,20 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         except (ValueError, json.JSONDecodeError) as error:
             self.json(HTTPStatus.BAD_REQUEST, {"error": str(error)})
 
+    def do_DELETE(self):
+        try:
+            if not self.path.startswith("/api/records/"):
+                self.send_error(HTTPStatus.NOT_FOUND)
+                return
+            record_id = self.path.rsplit("/", 1)[-1]
+            if not record_id:
+                self.send_error(HTTPStatus.NOT_FOUND)
+                return
+            result = self.service.ledger.delete(record_id)
+            self.json(HTTPStatus.OK, result)
+        except ValueError as error:
+            self.json(HTTPStatus.BAD_REQUEST, {"error": str(error)})
+
 
 def main():
     parser = argparse.ArgumentParser(description="Local web dashboard for AI foot measurement")

@@ -6,7 +6,7 @@ from measurement_ledger import MeasurementLedger
 
 
 class LedgerTests(unittest.TestCase):
-    def test_create_persists_and_update_edits_identity_only(self):
+    def test_create_update_and_delete_persist(self):
         path = Path(__file__).with_name(f".test-records-{uuid.uuid4().hex}.json")
         try:
             ledger = MeasurementLedger(path)
@@ -16,6 +16,9 @@ class LedgerTests(unittest.TestCase):
             updated = loaded.update_identity(record["id"], "J. Lin", "A02", "rechecked")
             self.assertEqual(updated["subject_name"], "J. Lin")
             self.assertEqual(updated["foot_length_mm"], 243.3)
+            deleted = loaded.delete(record["id"])
+            self.assertEqual(deleted["id"], record["id"])
+            self.assertEqual(MeasurementLedger(path).records, [])
         finally:
             path.unlink(missing_ok=True)
 

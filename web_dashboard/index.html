@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>足尺量測</title>
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
   <aside>
@@ -43,11 +43,12 @@
         <label>備註<input id="note" placeholder="襪子、姿勢、觀察事項"></label>
         <div class="metric"><small>預估腳長</small><strong id="length">—</strong></div>
         <button class="primary wide" id="save">儲存量測紀錄</button>
-        <div class="record-title"><b>量測紀錄</b><button id="update" class="text">更新選取資料</button></div>
+        <div class="record-title"><b>量測紀錄</b><span id="edit-hint">選擇一筆紀錄即可編輯</span></div>
+        <div class="record-editor"><button id="update" class="text" disabled>儲存編輯</button><button id="cancel-edit" class="text" hidden>取消編輯</button></div>
         <div id="records" class="records"></div>
       </aside>
     </section>
   </main>
-  <script src="app.js?v=6"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>
