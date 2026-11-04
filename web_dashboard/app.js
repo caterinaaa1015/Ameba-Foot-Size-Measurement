@@ -1,5 +1,5 @@
 const $ = selector => document.querySelector(selector);
-let state = {}, points = [], selected = null;
+let state = {}, points = [], selected = null, modelState = null;
 let frameUrl = null, loadingFrame = false;
 
 async function api(path, method = 'GET', body) {
@@ -19,6 +19,7 @@ function render(nextState) {
 
   const box = $('#records');
   box.innerHTML = '';
+  $('#records-count').textContent = `${(state.records || []).length} 筆`;
   (state.records || []).forEach(record => {
     const entry = document.createElement('div');
     entry.className = `record ${record.id === selected ? 'active' : ''}`;
@@ -47,12 +48,14 @@ function render(nextState) {
 
 function selectRecord(record) {
   selected = record.id;
-  $('#name').value = record.subject_name || '';
-  $('#sid').value = record.subject_id || '';
-  $('#note').value = record.note || '';
+  $('#edit-name').value = record.subject_name || '';
+  $('#edit-sid').value = record.subject_id || '';
+  $('#edit-note').value = record.note || '';
   $('#edit-hint').textContent = `正在編輯：${record.subject_name || '未命名'}`;
   $('#update').disabled = false;
   $('#cancel-edit').hidden = false;
+  $('#delete-selected').disabled = false;
+  showView('records');
   render(state);
 }
 
@@ -61,6 +64,7 @@ function cancelEdit() {
   $('#edit-hint').textContent = '選擇一筆紀錄即可編輯';
   $('#update').disabled = true;
   $('#cancel-edit').hidden = true;
+  $('#delete-selected').disabled = true;
 }
 
 async function deleteRecord(record) {
@@ -104,6 +108,29 @@ async function refresh() {
       loadFrame();
     }
   } catch (error) { $('#status').textContent = error.message; }
+}
+
+function showView(view) {
+  document.querySelectorAll('.view').forEach(section => { section.hidden = section.id !== `${view}-view`; });
+  document.querySelectorAll('[data-view]').forEach(link => link.classList.toggle('active', link.dataset.view === view));
+  if (view === 'models') refreshModels();
+}
+
+function renderModels(data) {
+  modelState = data;
+  const box = $('#model-cards');
+  box.innerHTML = '';
+  Object.values(data).forEach(model => {
+    const card = document.createElement('article');
+    card.className = 'card model-card';
+    card.innerHTML = `<div class="model-status ${model.available ? 'ready' : 'missing'}">${model.available ? '● 模型檔可用' : '● 找不到模型檔'}</div><h3>${model.title}</h3><code>${model.file}</code><p>可辨識：${model.classes.join('、')}</p><dl><div><dt>載入狀態</dt><dd>${model.loaded ? '已載入' : '尚未載入'}</dd></div><div><dt>目前辨識</dt><dd>${model.live_result || '尚未辨識'}</dd></div></dl>`;
+    box.append(card);
+  });
+}
+
+async function refreshModels() {
+  try { renderModels(await api('/api/models')); }
+  catch (error) { $('#model-cards').textContent = error.message; }
 }
 
 $('#start').onclick = async () => {
@@ -154,9 +181,15 @@ $('#save').onclick = async () => {
 };
 $('#update').onclick = async () => {
   if (!selected) return alert('請先從右側量測紀錄選擇一筆資料');
-  try { await api(`/api/records/${selected}`, 'POST', {subject_name: $('#name').value, subject_id: $('#sid').value, note: $('#note').value}); cancelEdit(); refresh(); }
+  try { await api(`/api/records/${selected}`, 'POST', {subject_name: $('#edit-name').value, subject_id: $('#edit-sid').value, note: $('#edit-note').value}); cancelEdit(); refresh(); }
   catch (error) { alert(error.message); }
 };
 $('#cancel-edit').onclick = cancelEdit;
+$('#delete-selected').onclick = async () => {
+  if (!selected) return;
+  const record = (state.records || []).find(item => item.id === selected);
+  if (record) await deleteRecord(record);
+};
+document.querySelectorAll('[data-view]').forEach(link => link.onclick = () => showView(link.dataset.view));
 setInterval(refresh, 900);
 refresh();

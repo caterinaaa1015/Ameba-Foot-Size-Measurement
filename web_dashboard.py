@@ -171,6 +171,28 @@ class MeasurementService:
                     "foot": None if not self.feet else {"confidence": round(self.feet[0]["confidence"], 3)},
                     "result": self.result, "records": self.ledger.records}
 
+    def model_state(self):
+        """Return only local model metadata for the dashboard status page."""
+        with self.lock:
+            return {
+                "coin": {
+                    "title": "硬幣辨識模型",
+                    "file": self.coin_weights.name,
+                    "available": self.coin_weights.is_file(),
+                    "loaded": self.coin_model is not None,
+                    "classes": ["10 元", "50 元"],
+                    "live_result": None if best_known_coin(self.coins) is None else f"{best_known_coin(self.coins)['denomination']} 元",
+                },
+                "foot": {
+                    "title": "襪子腳分割模型",
+                    "file": self.foot_weights.name,
+                    "available": self.foot_weights.is_file(),
+                    "loaded": self.foot_model is not None,
+                    "classes": ["襪子腳"],
+                    "live_result": None if not self.feet else "已辨識襪子腳",
+                },
+            }
+
     def jpeg(self):
         with self.lock:
             if self.overlay is None:
@@ -210,6 +232,8 @@ class DashboardHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path == "/api/state":
             self.json(HTTPStatus.OK, self.service.state()); return
+        if self.path == "/api/models":
+            self.json(HTTPStatus.OK, self.service.model_state()); return
         if self.path == "/api/frame.jpg":
             try: data = self.service.jpeg()
             except ValueError as error: self.json(HTTPStatus.BAD_REQUEST, {"error": str(error)}); return

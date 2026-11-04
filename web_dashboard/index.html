@@ -4,15 +4,20 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>足尺量測</title>
-  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
   <aside>
     <div class="menu-icon" aria-label="選單"><i></i><i></i><i></i></div>
-    <nav><b>量測</b><span>紀錄</span><span>模型狀態</span></nav>
+    <nav>
+      <button class="nav-link active" data-view="measure">量測</button>
+      <button class="nav-link" data-view="records">紀錄</button>
+      <button class="nav-link" data-view="models">模型狀態</button>
+    </nav>
     <small>AMEBA ／ 本機 AI<br>所有資料只留在這台電腦</small>
   </aside>
   <main>
+    <section class="view active" id="measure-view">
     <header>
       <div><h1>尺碼量測</h1></div>
       <div class="health" id="health">● 等待中</div>
@@ -43,12 +48,33 @@
         <label>備註<input id="note" placeholder="襪子、姿勢、觀察事項"></label>
         <div class="metric"><small>預估腳長</small><strong id="length">—</strong></div>
         <button class="primary wide" id="save">儲存量測紀錄</button>
-        <div class="record-title"><b>量測紀錄</b><span id="edit-hint">選擇一筆紀錄即可編輯</span></div>
-        <div class="record-editor"><button id="update" class="text" disabled>儲存編輯</button><button id="cancel-edit" class="text" hidden>取消編輯</button></div>
-        <div id="records" class="records"></div>
+        <button class="text records-link" data-view="records">查看與管理量測紀錄 →</button>
       </aside>
     </section>
+    </section>
+
+    <section class="view" id="records-view" hidden>
+      <header class="page-heading"><div><p class="eyebrow">本機資料庫</p><h2>量測紀錄</h2><p>可查看、編輯或刪除每一筆已儲存的量測結果</p></div><button class="primary" data-view="measure">回到量測</button></header>
+      <section class="records-layout">
+        <div class="card records-card"><div class="records-head"><b>所有紀錄</b><span id="records-count">0 筆</span></div><div id="records" class="records records-page"></div></div>
+        <aside class="panel card edit-panel">
+          <p class="eyebrow">選取紀錄</p><p id="edit-hint" class="edit-hint">請從左側選擇一筆紀錄</p>
+          <label>姓名<input id="edit-name" placeholder="例如：林小美"></label>
+          <label>學號／編號<input id="edit-sid" placeholder="選填"></label>
+          <label>備註<input id="edit-note" placeholder="襪子、姿勢、觀察事項"></label>
+          <div class="edit-actions"><button id="update" class="primary" disabled>儲存編輯</button><button id="cancel-edit" hidden>取消</button></div>
+          <button id="delete-selected" class="delete-selected" disabled>刪除這筆紀錄</button>
+          <small class="preserve-note">刪除紀錄不會自動刪除原始量測影像</small>
+        </aside>
+      </section>
+    </section>
+
+    <section class="view" id="models-view" hidden>
+      <header class="page-heading"><div><p class="eyebrow">本機 AI</p><h2>模型狀態</h2><p>確認量測系統使用的模型與目前載入狀態</p></div><button class="primary" data-view="measure">回到量測</button></header>
+      <section id="model-cards" class="model-grid"></section>
+      <section class="card model-note"><b>量測方式</b><p>系統先辨識 10 元或 50 元硬幣，再以硬幣實際直徑換算比例，結合襪子腳分割遮罩估計腳長</p></section>
+    </section>
   </main>
-  <script src="app.js?v=7"></script>
+  <script src="app.js?v=8"></script>
 </body>
 </html>
