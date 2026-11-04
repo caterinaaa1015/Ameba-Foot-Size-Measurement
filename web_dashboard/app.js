@@ -14,7 +14,7 @@ function render(nextState) {
   $('#status').textContent = state.status || '';
   $('#health').textContent = state.frozen ? '● 分析畫面已凍結' : state.coin && state.foot ? '● AI 已準備完成' : '● 等待中';
   $('#coin').textContent = state.coin ? `硬幣 ${state.coin.denomination} 元 · ${state.coin.confidence}` : '硬幣 —';
-  $('#foot').textContent = state.foot ? `襪子腳 · ${state.foot.confidence}` : '襪子腳 —';
+  $('#foot').textContent = state.foot ? `足部輪廓 · ${state.foot.confidence}` : '足部輪廓 —';
   if (state.result) $('#length').textContent = `${state.result.foot_length_mm.toFixed(1)} mm`;
 
   const box = $('#records');

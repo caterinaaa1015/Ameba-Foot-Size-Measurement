@@ -29,7 +29,7 @@ from measurement_ledger import MeasurementLedger
 
 BASE = Path(__file__).resolve().parent
 WEB_ROOT = BASE / "web_dashboard"
-DEFAULT_FOOT_WEIGHTS = BASE / "models/socked_foot_seg_best.pt"
+DEFAULT_FOOT_WEIGHTS = BASE / "runs/segment/output/foot_seg/pilot_140_hardcases/weights/best.pt"
 
 
 class MeasurementService:
@@ -55,7 +55,7 @@ class MeasurementService:
             self.coin_model = load(self.coin_weights)
         if self.foot_model is None:
             if not self.foot_weights.is_file():
-                raise ValueError(f"找不到襪子腳模型：{self.foot_weights}")
+                raise ValueError(f"找不到足部輪廓模型：{self.foot_weights}")
             from ultralytics import YOLO
             self.foot_model = YOLO(str(self.foot_weights))
 
@@ -103,14 +103,14 @@ class MeasurementService:
             self.frame, self.coins, self.feet = frame, coins, feet
             self.overlay = render_combined_detections(frame, coins, feet)
             coin = best_known_coin(coins)
-            self.status = (f"硬幣 NT${coin['denomination']}、襪子腳已辨識，可拍下分析"
-                           if coin and feet else "等待同時辨識一枚硬幣與一隻襪子腳")
+            self.status = (f"硬幣 NT${coin['denomination']}、足部輪廓已辨識，可拍下分析"
+                           if coin and feet else "等待同時辨識一枚硬幣與足部輪廓")
 
     def freeze(self):
         with self.lock:
             coin = best_known_coin(self.coins)
             if self.frame is None or coin is None or not self.feet:
-                raise ValueError("需要同時辨識一枚 1／10／50 元硬幣與一隻襪子腳")
+                raise ValueError("需要同時辨識一枚 10／50 元硬幣與足部輪廓")
             self.frozen = True
             self.result = None
             self.last_source = {"kind": "ameba_rtsp_decoded_frame", "captured_utc": datetime.now(timezone.utc).isoformat(),
@@ -135,7 +135,7 @@ class MeasurementService:
         with self.lock:
             coin = best_known_coin(self.coins)
             if not self.frozen or self.frame is None or coin is None or not self.feet:
-                raise ValueError("請先在同時辨識到硬幣與襪子腳時凍結分析畫面")
+                raise ValueError("請先在同時辨識到硬幣與足部輪廓時凍結分析畫面")
             denomination = coin["denomination"]
             self.result = measure_ai_assisted(self.frame, coin, self.feet[0],
                                               COIN_DIAMETERS_MM[denomination],
@@ -184,12 +184,12 @@ class MeasurementService:
                     "live_result": None if best_known_coin(self.coins) is None else f"{best_known_coin(self.coins)['denomination']} 元",
                 },
                 "foot": {
-                    "title": "襪子腳分割模型",
+                    "title": "足部輪廓分割模型",
                     "file": self.foot_weights.name,
                     "available": self.foot_weights.is_file(),
                     "loaded": self.foot_model is not None,
-                    "classes": ["襪子腳"],
-                    "live_result": None if not self.feet else "已辨識襪子腳",
+                    "classes": ["穿襪足部"],
+                    "live_result": None if not self.feet else "已辨識足部輪廓",
                 },
             }
 
