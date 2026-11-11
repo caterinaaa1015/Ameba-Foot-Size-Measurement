@@ -14,6 +14,7 @@ from pathlib import Path
 import threading
 import time
 from urllib.parse import urlparse
+import socket
 
 import cv2
 import numpy as np
@@ -273,13 +274,22 @@ class DashboardHandler(SimpleHTTPRequestHandler):
 
 def main():
     parser = argparse.ArgumentParser(description="Local web dashboard for AI foot measurement")
+    parser.add_argument("--host", default="127.0.0.1",
+                        help="監聽位址；同一個 Wi-Fi 展示請使用 0.0.0.0")
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--output", type=Path, default=Path("foot_measure_dashboard"))
     args = parser.parse_args()
     service = MeasurementService(args.output)
     DashboardHandler.service = service
-    server = ThreadingHTTPServer(("127.0.0.1", args.port), DashboardHandler)
-    print(f"開啟瀏覽器： http://127.0.0.1:{args.port}")
+    server = ThreadingHTTPServer((args.host, args.port), DashboardHandler)
+    if args.host == "0.0.0.0":
+        addresses = sorted({address[4][0] for address in socket.getaddrinfo(socket.gethostname(), None, socket.AF_INET)
+                            if not address[4][0].startswith("127.")})
+        print("區網展示模式已啟動。請讓其他裝置與這台電腦連上同一個 Wi-Fi")
+        for address in addresses:
+            print(f"其他裝置可開啟： http://{address}:{args.port}")
+    else:
+        print(f"開啟瀏覽器： http://{args.host}:{args.port}")
     try: server.serve_forever()
     finally: service.close(); server.server_close()
 
