@@ -13,6 +13,7 @@ foot_measure_dashboard/
 foot_captures/
 captures/
 *.log
+dashboard_startup.log
 
 # Training datasets and generated runs
 coin_dataset/
