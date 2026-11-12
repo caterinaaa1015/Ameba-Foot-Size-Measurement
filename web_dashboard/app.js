@@ -2,6 +2,10 @@ const $ = selector => document.querySelector(selector);
 let state = {}, points = [], selected = null, modelState = null;
 let frameUrl = null, loadingFrame = false;
 
+function formatLengthCm(lengthMm) {
+  return `${(Number(lengthMm) / 10).toFixed(1)} cm`;
+}
+
 async function api(path, method = 'GET', body) {
   const response = await fetch(path, {method, headers: {'Content-Type': 'application/json'}, body: body ? JSON.stringify(body) : undefined});
   const data = await response.json().catch(() => ({}));
@@ -15,7 +19,7 @@ function render(nextState) {
   $('#health').textContent = state.frozen ? '● 分析畫面已凍結' : state.coin && state.foot ? '● AI 已準備完成' : '● 等待中';
   $('#coin').textContent = state.coin ? `硬幣 ${state.coin.denomination} 元 · ${state.coin.confidence}` : '硬幣 —';
   $('#foot').textContent = state.foot ? `足部輪廓 · ${state.foot.confidence}` : '足部輪廓 —';
-  if (state.result) $('#length').textContent = `${state.result.foot_length_mm.toFixed(1)} mm`;
+  if (state.result) $('#length').textContent = formatLengthCm(state.result.foot_length_mm);
 
   const box = $('#records');
   box.innerHTML = '';
@@ -32,7 +36,7 @@ function render(nextState) {
     const actions = document.createElement('div');
     actions.className = 'record-actions';
     const value = document.createElement('em');
-    value.textContent = `${record.foot_length_mm} mm`;
+    value.textContent = formatLengthCm(record.foot_length_mm);
     const edit = document.createElement('button');
     edit.className = 'record-action'; edit.textContent = '編輯';
     edit.onclick = event => { event.stopPropagation(); selectRecord(record); };
@@ -150,7 +154,7 @@ $('#auto-measure').onclick = async () => {
   try {
     const result = await api('/api/auto-measure', 'POST');
     state.result = result;
-    $('#length').textContent = `${result.foot_length_mm.toFixed(1)} mm`;
+    $('#length').textContent = formatLengthCm(result.foot_length_mm);
     $('#status').textContent = '已自動計算腳長，請確認量測線後儲存';
     loadFrame(true);
   } catch (error) { alert(error.message); }
@@ -164,7 +168,7 @@ $('#frame').onclick = async event => {
     try {
       const result = await api('/api/measure', 'POST', {points});
       state.result = result;
-      $('#length').textContent = `${result.foot_length_mm.toFixed(1)} mm`;
+      $('#length').textContent = formatLengthCm(result.foot_length_mm);
       $('#status').textContent = '量測完成，請填寫右側資料並儲存';
       loadFrame(true);
     } catch (error) { alert(error.message); points = []; drawPoints(); }
